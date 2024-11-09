@@ -29,7 +29,10 @@ yarn-error.*
 *.pem
 
 # local env files
-.env*.local
+.env*
+.local
+google-services.json
+firebaseConfig.js
 
 # typescript
 *.tsbuildinfo
