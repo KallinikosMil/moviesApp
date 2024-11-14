@@ -1,6 +1,13 @@
+// LoginScreen.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
-import { Button } from 'drumber-expo-ui-lib';
+import { View, TextInput, StyleSheet, Alert } from 'react-native';
+import {
+  Button,
+  Gap,
+  CustomText,
+  SPACING,
+  TextStyleType,
+} from 'drumber-expo-ui-lib';
 import { auth } from '../../../firebaseConfig';
 import {
   signInWithEmailAndPassword,
@@ -9,12 +16,7 @@ import {
 } from 'firebase/auth';
 import * as Google from 'expo-auth-session/providers/google';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-
-type RootStackParamList = {
-  LoginScreen: undefined;
-  RegisterScreen: undefined;
-  SettingsScreen: undefined;
-};
+import { RootStackParamList } from '../../../navigation/types'; // Import the shared type
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LoginScreen'>;
 
@@ -22,16 +24,15 @@ export default function LoginScreen({ navigation }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // Set up Google Sign-In
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: 'YOUR_WEB_CLIENT_ID', // Replace with your actual Web Client ID
+    clientId: 'YOUR_WEB_CLIENT_ID',
   });
 
   useEffect(() => {
     if (response?.type === 'success') {
       const { id_token } = response.params;
-      const credential = GoogleAuthProvider.credential(id_token); // Get Google credential
-      signInWithCredential(auth, credential) // Sign in with Google credential
+      const credential = GoogleAuthProvider.credential(id_token);
+      signInWithCredential(auth, credential)
         .then(() => {
           Alert.alert('Success', 'Signed in with Google!');
         })
@@ -42,22 +43,17 @@ export default function LoginScreen({ navigation }: Props) {
     }
   }, [response]);
 
-  // const handleLogin = () => {
-  //   signInWithEmailAndPassword(auth, email, password) // Sign in with email and password
-  //     .then(() => {
-  //       Alert.alert('Success', 'Logged in successfully!');
-  //     })
-  //     .catch((error) => {
-  //       console.error('Login error:', error);
-  //       Alert.alert('Error', error.message);
-  //     });
-  // };
   const handleLogin = () => {
     navigation.navigate('SettingsScreen');
   };
+  const handleRegister = ()=>{
+    navigation.navigate('RegisterScreen')
+  }
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <CustomText textStyle={TextStyleType.H1} style={styles.title}>
+        Login
+      </CustomText>
       <TextInput
         placeholder="Email"
         value={email}
@@ -73,15 +69,15 @@ export default function LoginScreen({ navigation }: Props) {
         style={styles.input}
         secureTextEntry
       />
+      <Gap gap={SPACING.PADDING_SIZE_12} />
       <Button label="Login" onPress={handleLogin} />
+      <Gap gap={SPACING.PADDING_SIZE_12} />
+      <Button label="Register" onPress={handleRegister} />
+      <Gap gap={SPACING.PADDING_SIZE_12} />
       <Button
         label="Sign in with Google"
         onPress={() => promptAsync()}
         disabled={!request}
-      />
-      <Button
-        label="Register"
-        onPress={() => navigation.navigate('RegisterScreen')}
       />
     </View>
   );
@@ -92,10 +88,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#fff',
   },
   title: {
-    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 24,
     textAlign: 'center',

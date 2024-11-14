@@ -1,15 +1,23 @@
 // App.tsx
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { useSelector, useDispatch, Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { PersistGate } from 'redux-persist/integration/react';
 import { FontLoader, ThemeProvider, useTheme } from 'drumber-expo-ui-lib';
+import { toggleTheme } from './packages/settings/slices/themeSlice';
+import { store, persistor } from './redux/store';
+
 import LoginScreen from './packages/authentication/screens/LoginScreen';
 import SettingsScreen from './packages/settings/screens/SettingsScreen';
+import RegisterScreen from './packages/authentication/screens/RegisterScreen';
 
-const Stack = createNativeStackNavigator();
+import { RootStackParamList } from './navigation/types';
 
-export default function App() {
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const App: React.FC = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   const handleFontsLoaded = () => setFontsLoaded(true);
@@ -19,25 +27,43 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider initialTheme="light">
-      {' '}
-      {/* Default to light but will load from storage */}
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <AppContent />
+      </PersistGate>
+    </Provider>
+  );
+};
+
+const AppContent: React.FC = () => {
+  const themeMode = useSelector((state: any) => state.theme.theme);
+  const dispatch = useDispatch();
+  const handleToggleTheme = () => dispatch(toggleTheme());
+
+  return (
+    <ThemeProvider themeMode={themeMode} toggleTheme={handleToggleTheme}>
       <AppContainer />
     </ThemeProvider>
   );
-}
+};
+
 const AppContainer: React.FC = () => {
   const { theme } = useTheme();
 
   return (
-    <View style={[styles.root, { backgroundColor: theme.colors.background }]}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="LoginScreen">
-          <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="LoginScreen"
+        screenOptions={{
+          contentStyle: { backgroundColor: theme.colors.background },
+        }}
+      >
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+
+        <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
@@ -46,3 +72,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default App;

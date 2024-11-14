@@ -6,7 +6,7 @@ const SettingsScreen: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   const handleToggleSwitch = () => {
-    toggleTheme();
+    toggleTheme(); // Toggles the theme in the Redux state
   };
 
   return (
