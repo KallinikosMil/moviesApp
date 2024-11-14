@@ -55,59 +55,7 @@ const registerSlice = createSlice({
   },
 });
 
-// export const registerUser =
-//   (email: string, password: string) => async (dispatch: AppDispatch) => {
-//     dispatch(registerSlice.actions.registerUserSlice());
-//     console.log('Dispatching registerUser action');
 
-//     const handleSuccess = async (user: any) => {
-//       await sendEmailVerification(user);
-//       dispatch(registerSlice.actions.registerUserSliceSuccess(user));
-//     };
-
-//     const handleError = (error: AuthError) => {
-//       let errorMessage = 'An error occurred during registration.';
-
-//       switch (error.code) {
-//         case 'auth/invalid-email':
-//           errorMessage = 'The email address is badly formatted.';
-//           break;
-//         case 'auth/weak-password':
-//           errorMessage = 'The password must be at least 6 characters long.';
-//           break;
-//         case 'auth/email-already-in-use':
-//           errorMessage =
-//             'The email address is already in use by another account.';
-//           break;
-//         case 'auth/operation-not-allowed':
-//           errorMessage =
-//             'Email/password accounts are not enabled. Contact support.';
-//           break;
-//         default:
-//           errorMessage = error.message;
-//       }
-
-//       dispatch(registerSlice.actions.registerUserSliceError(errorMessage));
-//     };
-
-//     try {
-//       const userCredential = await createUserWithEmailAndPassword(
-//         auth,
-//         email,
-//         password
-//       );
-//       if (userCredential.user) {
-//         await handleSuccess(userCredential.user);
-//       } else {
-//         handleError({
-//           code: 'auth/user-not-found',
-//           message: 'User data is missing after registration.',
-//         } as AuthError);
-//       }
-//     } catch (error) {
-//       handleError(error as AuthError);
-//     }
-//   };
 export const registerUser =
   (email: string, password: string) => async (dispatch: AppDispatch) => {
     dispatch(registerSlice.actions.registerUserSlice());
